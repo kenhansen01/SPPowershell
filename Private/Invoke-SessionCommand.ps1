@@ -11,11 +11,11 @@ Function Invoke-SessionCommand {
   [cmdletbinding()]
   param(
     # Credential
-    [Parameter(ValueFromPipelineByPropertyName = $True, Mandatory)]
+    [Parameter(ValueFromPipelineByPropertyName = $True)]
     [pscredential]
     $Credential,
     # Computer Names to run command on
-    [Parameter(ValueFromPipelineByPropertyName = $True)]
+    [Parameter(ValueFromPipelineByPropertyName = $True, Mandatory)]
     [string[]]
     $ComputerNames,
     # if switch is present this will run on all servers at the same time, otherwise it will iterate through each
