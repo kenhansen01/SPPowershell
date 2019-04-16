@@ -1,30 +1,41 @@
-
 Function Get-SPSiteCollection {
   <#
   .SYNOPSIS
   .DESCRIPTION
   .PARAMETER Credential
-  .PARAMETER ComputerNames
-  .PARAMETER SPSiteUrlPattern
-  .PARAMETER RunConcurrent
-  .PARAMETER ScriptBlock
+  .PARAMETER SPEnvironment
+  .PARAMETER SPUrl
+  .PARAMETER DefaultConfig
+  .PARAMETER AllSites
+  .PARAMETER ByUrl
+  .PARAMETER ByTitle
+  .PARAMETER ByTemplate
+  .PARAMETER ByDescription
+  .PARAMETER SiteUrl
+  .PARAMETER SiteTitle
+  .PARAMETER SiteTemplate
+  .PARAMETER SiteDescription
   .EXAMPLE
   #>
   [cmdletbinding()]
   param(
     # Credential
-    # [Parameter(ValueFromPipelineByPropertyName = $True)]
-    # [pscredential]
-    # $Credential,
+    [Parameter(ValueFromPipelineByPropertyName = $True)]
+    [pscredential]
+    $Credential,
     # SP Environment
-    [Parameter(ValueFromPipelineByPropertyName = $True, Mandatory, Position=0)]
+    [Parameter(ValueFromPipelineByPropertyName = $True, Position=0)]
     [ValidateSet("2013","2016","2019","Online")]
     [string]
     $SPEnvironment,
     # root sharepoint url
-    [Parameter(ValueFromPipelineByPropertyName = $True, Mandatory, Position=1)]
+    [Parameter(ValueFromPipelineByPropertyName = $True, Position=1)]
     [string]
     $SPUrl,
+    # all sites
+    [Parameter()]
+    [switch]
+    $CustomConfig,
     # all sites
     [Parameter(ParameterSetName='AllSites')]
     [switch]
@@ -64,25 +75,45 @@ Function Get-SPSiteCollection {
   )
   BEGIN
   {
-    
-    
+    if (!$CustomConfig) {
+     $config = ([SPConfigure]::new()).Configuration
+    } else {      
+      Write-Verbose $SiteUrl
+      $config = ([SPConfigure]::new([pscustomobject]@{
+        SPEnvironment = $SPEnvironment
+        SPUrl = $SPUrl
+        SiteUrl = $SiteUrl
+        SiteTitle = $SiteTitle
+        SiteTemplate = $SiteTemplate
+        SiteDescription = $SiteDescription
+      })).Configuration
+    }
+    write-verbose "$($config.Configuration.SiteUrl)"
+    # if (!(Get-Module "SharePointPnPPowerShell$SPEnvironment")) {
+      # Set-PnPPowershell -SPEnvironment $SPEnvironment -Verbose:$VerbosePreference
+      $config = ([SPConfigure]::new()).Configuration
+      $config | Set-PnPPowershell
+    # }
+
+    if ($Credential) {
+      Connect-PnPOnline -Url $config.SPUrl -Credentials $Credential
+    } else {
+      Connect-PnPOnline -Url $config.SPUrl -CurrentCredentials
+    }     
   }
   PROCESS
   {
-    if(!(Get-PnPConnection)){
-      Set-PnPPowershell -SPEnvironment $SPEnvironment -SPUrl $SPUrl -Verbose:$VerbosePreference
-    }    
     $SelectSites = [SPSelectSites]::new()
     
     if ($AllSites) { $SiteCollections = $SelectSites.AllSites }
-    if ($ByUrl) { $SiteCollections = $SelectSites.SitesByUrl($SiteUrl) }
-    if ($ByTitle) { $SiteCollections = $SelectSites.SitesByTitle($SiteTitle) } 
-    if ($ByTemplate) { $SiteCollections = $SelectSites.SitesByTemplate($SiteTemplate) }
-    if ($ByDescription) { $SiteCollections = $SelectSites.SitesByDescription($SiteDescription) }
+    if ($ByUrl) { $SiteCollections = $SelectSites.SitesByUrl($config.SiteUrl) }
+    if ($ByTitle) { $SiteCollections = $SelectSites.SitesByTitle($config.SiteTitle) } 
+    if ($ByTemplate) { $SiteCollections = $SelectSites.SitesByTemplate($config.SiteTemplate) }
+    if ($ByDescription) { $SiteCollections = $SelectSites.SitesByDescription($config.SiteDescription) }
     $SiteCollections
   }
   END
   {
-    
+    Disconnect-PnPOnline
   }
 }
