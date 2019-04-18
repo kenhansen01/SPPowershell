@@ -24,4 +24,5 @@ $siteUrls = (Get-SPSiteCollection -ConfigFile "C:\User\Me\Documents\Config.psd1"
 # At each url, ensure the group exists, has permissions and includes users
 $siteUrls | Set-SiteGroupUser
 ```
+
 Neat!
