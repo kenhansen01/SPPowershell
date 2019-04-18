@@ -16,8 +16,8 @@ Function Set-PnPPowershell {
     
     Default: Online
 
-  .PARAMETER NoProxy
-    Add this switch if you are not behind a Corporate Proxy. Default is to assume a corporate proxy exists since so many SharePoint environments are set up that way.
+  .PARAMETER Proxy
+    True if you are behind a Corporate Proxy. Default is true since so many SharePoint environments are set up that way.
 
   .PARAMETER AddCSOM
     If you need to work with CSOM directly, this switch will add/update the package.

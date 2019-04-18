@@ -1,14 +1,25 @@
 @{
+  # Module Cofiguration
+  Credential = [System.Net.CredentialCache]::DefaultNetworkCredentials
   SPEnvironment = "2016"
   Proxy = $true
   AddCSOM = $false
-  SPUrl = "http://atlas"
-  SiteUrl = "/tp"
+  # Default Connection
+  SPUrl = "http://my.cool.site"
+  # Site Collection
+  SiteUrl = "/projects"
   SiteTitle = ""
   SiteTemplate = ""
   SiteDescription = ""
-  GroupTitle = "RPAGroup"
+  # Site Groups / Users
+  GroupTitle = "GroupTitle"
   GroupDescription = "Group for robots"
-  GroupOwner = "AMEREN\E127155"
-  GroupUsers = @("AMEREN\E122988", "AMEREN\Q146906", "AMEREN\Q147750", "AMEREN\Q156370", "AMEREN\E127155")
+  GroupOwner = "DOMAIN\username" # O365 uses email format
+  GroupUsers = @(
+    "DOMAIN\username",
+    "DOMAIN\username",
+    "DOMAIN\username",
+    "DOMAIN\username",
+    "DOMAIN\username"
+  ) # O365 uses email format
 }
