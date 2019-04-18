@@ -32,7 +32,7 @@ Function Get-SPSiteCollection {
     [Parameter(ValueFromPipelineByPropertyName = $True, Position=1)]
     [string]
     $SPUrl,
-    # all sites
+    # Custom Config
     [Parameter()]
     [switch]
     $CustomConfig,
@@ -80,6 +80,7 @@ Function Get-SPSiteCollection {
     } else {      
       Write-Verbose $SiteUrl
       $config = ([SPConfigure]::new([pscustomobject]@{
+        Credential = $Credential
         SPEnvironment = $SPEnvironment
         SPUrl = $SPUrl
         SiteUrl = $SiteUrl
@@ -88,16 +89,15 @@ Function Get-SPSiteCollection {
         SiteDescription = $SiteDescription
       })).Configuration
     }
-    write-verbose "$($config.Configuration.SiteUrl)"
-    # if (!(Get-Module "SharePointPnPPowerShell$SPEnvironment")) {
-      # Set-PnPPowershell -SPEnvironment $SPEnvironment -Verbose:$VerbosePreference
-      $config = ([SPConfigure]::new()).Configuration
-      $config | Set-PnPPowershell
-    # }
+    write-verbose "$($config.SiteUrl)"
+    if (!(Get-Module "SharePointPnPPowerShell$($config.SPEnvironment)")) {
+      $config | Set-PnPPowershell -Verbose:$VerbosePreference
+    }
 
-    if ($Credential) {
+    if ($config.Credential) {
       Connect-PnPOnline -Url $config.SPUrl -Credentials $Credential
     } else {
+      Write-Verbose "Connecting to $($config.SPUrl)"
       Connect-PnPOnline -Url $config.SPUrl -CurrentCredentials
     }     
   }

@@ -5,11 +5,11 @@ class SPSiteGroup : Object {
   [String]$OwnerTitle
 }
 
-class AtlasSiteGroups {
+class SPSiteGroups {
   [SPSiteGroup[]]$AllGroups
-  [SPSiteGroup]$SelectedGroup
+  [SPSiteGroup[]]$SelectedGroup
 
-  AtlasSiteGroups() {
+  SPSiteGroups() {
     $this.AllGroups = Get-PnPGroup |
       ForEach-Object {[SPSiteGroup]@{
         Id = $_.Id;
@@ -20,19 +20,23 @@ class AtlasSiteGroups {
   }
 
   [SPSiteGroup[]] Groups () {
+    Write-Verbose "All Groups"
     return $this.AllGroups
   }
 
-  [SPSiteGroup] GroupById ([Int32]$Id) {
-    return $this.AllGroups | Where-Object ($_.Id -eq $Id)
+  [SPSiteGroup[]] GroupById ([Int32]$Id) {
+    Write-Verbose "Group ID: $Id"
+    return $this.AllGroups | Where-Object {$_.Id -eq $Id}
   }
 
-  [SPSiteGroup] GroupByTitle ([String]$Title) {
-    return $this.AllGroups | Where-Object ($_.Title -eq $Title)
+  [SPSiteGroup[]] GroupByTitle ([String]$Title) {
+    Write-Verbose "Group Title: $Title"
+    return $this.AllGroups | Where-Object {$_.Title -eq $Title}
   }
   
   [SPSiteGroup[]] GroupByLogin ([String]$LoginName) {
-    return $this.AllGroups | Where-Object ($_.LoginName -eq $LoginName)
+    Write-Verbose "Group LoginName: $LoginName"
+    return $this.AllGroups | Where-Object {$_.LoginName -eq $LoginName}
   }
 
   [SPSiteGroup] NewSiteGroup (

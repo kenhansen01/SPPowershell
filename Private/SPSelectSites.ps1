@@ -20,10 +20,12 @@ class SPSelectSites {
   }
   
   [SPSelectSite[]] Sites () {
+    Write-Verbose "Finding all sites."
     return $this.AllSites
   }
 
   [SPSelectSite[]] SitesByUrl ([String]$UrlFragment) {
+    Write-Verbose "Finding sites where url matches: *$UrlFragment*"
     return $this.AllSites | Where-Object { $_.Url -like "*$UrlFragment*"}
   }
 
