@@ -1,0 +1,11 @@
+PSTOPIC
+    about_SPAdminPowershell
+
+SHORT DESCRIPTION
+    SPAdminPowershell is a module to help with common sharepoint tasks
+
+LONG DESCRIPTION
+    SPAdminPowershell has SharePoint Tasks
+
+DETAILED DESCRIPTION
+    More info here.
