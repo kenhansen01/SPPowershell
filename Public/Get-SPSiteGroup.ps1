@@ -32,6 +32,10 @@ Function Get-SPSiteGroup {
     [Parameter(ValueFromPipelineByPropertyName = $True, Position=1)]
     [string]
     $SPUrl,
+    # config file custom location
+    [Parameter(ValueFromPipelineByPropertyName = $True, Position=1)]
+    [string]
+    $ConfigFile,
     # Custom Config
     [Parameter()]
     [switch]
@@ -75,30 +79,25 @@ Function Get-SPSiteGroup {
   )
   BEGIN
   {
-    if (!$CustomConfig) {
-     $config = ([SPConfigure]::new()).Configuration
-    } else {      
-      Write-Verbose $GroupTitle
-      $config = ([SPConfigure]::new([pscustomobject]@{
-        Credential = $Credential
-        SPEnvironment = $SPEnvironment
-        SPUrl = $SPUrl
-        GroupId = $GroupId
-        GroupTitle = $GroupTitle
-        GroupLoginName = $GroupLoginName
-        GroupOwnerTitle = $GroupOwnerTitle
-      })).Configuration
+    $customConfigObject = [PSCustomObject]@{
+      Credential = $Credential
+      SPEnvironment = $SPEnvironment
+      SPUrl = $SPUrl
+      GroupId = $GroupId
+      GroupTitle = $GroupTitle
+      GroupLoginName = $GroupLoginName
+      GroupOwnerTitle = $GroupOwnerTitle
     }
-    Write-Verbose "$($config.GroupTitle)"
-    if (!(Get-Module "SharePointPnPPowerShell$($config.SPEnvironment)")) {
-      $config | Set-PnPPowershell -Verbose:$VerbosePreference
+    if(!$config -or !!$ConfigFile -or $CustomConfig) {
+      Set-SPModuleConfiguration -CustomConfig:$CustomConfig -CustomConfigObject $customConfigObject -ConfigFile $ConfigFile
     }
-
+    Write-Verbose "Group Title: $($config.GroupTitle)"
     if ($config.Credential) {
-      Connect-PnPOnline -Url $config.SPUrl -Credentials $Credential -Verbose:$VerbosePreference
+      Connect-PnPOnline -Url $config.SPUrl -Credentials $Credential
     } else {
-      Connect-PnPOnline -Url $config.SPUrl -CurrentCredentials -Verbose:$VerbosePreference
-    }     
+      Write-Verbose "Connecting to $($config.SPUrl)"
+      Connect-PnPOnline -Url $config.SPUrl -CurrentCredentials
+    }
   }
   PROCESS
   {
