@@ -1,5 +1,4 @@
 class SPSelectSite : Object {
-  # Properties
   [String]$Title
   [String]$Url
   [String]$Description
