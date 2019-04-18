@@ -9,7 +9,7 @@ class SPConfigure {
     Write-Verbose "Configuration Complete!"
   }
 
-    # Custom configuration, loads default config, overrides default with custom values wherever they are listed, adds property if it doesn't exist.
+  # Custom configuration, loads default config, overrides default with custom values wherever they are listed, adds property if it doesn't exist.
   SPConfigure([PSCustomObject]$config, [string]$configFile = ".\Public\Config.psd1") {
     $initialConfig = [PSCustomObject](Import-PowerShellDataFile $configFile)
     $tempConfig = [PSCustomObject]@{}
