@@ -18,24 +18,24 @@ Function Get-SPSiteGroup {
   .EXAMPLE
   #>
   [cmdletbinding()]
-  param(
+  param(  
+    # config file custom location
+    [Parameter(ValueFromPipelineByPropertyName = $True, ValueFromPipeline, Position=0)]
+    [string]
+    $ConfigFile,
     # Credential
     [Parameter(ValueFromPipelineByPropertyName = $True)]
     [pscredential]
     $Credential,
     # SP Environment
-    [Parameter(ValueFromPipelineByPropertyName = $True, Position=0)]
+    [Parameter(ValueFromPipelineByPropertyName = $True)]
     [ValidateSet("2013","2016","2019","Online")]
     [string]
     $SPEnvironment,
     # root sharepoint url
-    [Parameter(ValueFromPipelineByPropertyName = $True, Position=1)]
+    [Parameter(ValueFromPipelineByPropertyName = $True)]
     [string]
     $SPUrl,
-    # config file custom location
-    [Parameter(ValueFromPipelineByPropertyName = $True, Position=1)]
-    [string]
-    $ConfigFile,
     # Custom Config
     [Parameter()]
     [switch]
