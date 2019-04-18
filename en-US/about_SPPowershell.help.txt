@@ -1,0 +1,11 @@
+PSTOPIC
+    about_spPowershell
+
+SHORT DESCRIPTION
+    spPowershell is a module to help with common sharepoint tasks
+
+LONG DESCRIPTION
+    spPowershell has SharePoint Tasks
+
+DETAILED DESCRIPTION
+    More info here.
