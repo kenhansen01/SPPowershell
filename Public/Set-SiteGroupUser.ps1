@@ -16,16 +16,20 @@ Function Set-SiteGroupUser {
     [pscredential]
     $Credential,
     # SP Environment
-    [Parameter(ValueFromPipelineByPropertyName = $True, Position=0)]
+    [Parameter(ValueFromPipelineByPropertyName = $True)]
     [ValidateSet("2013","2016","2019","Online")]
     [string]
     $SPEnvironment,
     # root sharepoint url
-    [Parameter(ValueFromPipelineByPropertyName = $True, Position=1)]
+    [Parameter(ValueFromPipelineByPropertyName = $True, ValueFromPipeline, Position=0)]
     [string]
     $SPUrl,
+    # Custom Config
+    [Parameter()]
+    [switch]
+    $CustomConfig,
     # config file custom location
-    [Parameter(ValueFromPipelineByPropertyName = $True, Position=1)]
+    [Parameter(ValueFromPipelineByPropertyName = $True)]
     [string]
     $ConfigFile,
     # title string fragment to search groups by
@@ -46,7 +50,6 @@ Function Set-SiteGroupUser {
     $customConfigObject = [PSCustomObject]@{
       Credential = $Credential
       SPEnvironment = $SPEnvironment
-      SPUrl = $SPUrl
       GroupTitle = $GroupTitle
       GroupUsers = $GroupUsers
     }
@@ -58,10 +61,18 @@ Function Set-SiteGroupUser {
     } else {
       Write-Verbose "Connecting to $($config.SPUrl)"
       Connect-PnPOnline -Url $config.SPUrl -CurrentCredentials
-    }
+    }    
   }
   PROCESS
   {
+    if($SPUrl){
+      if ($config.Credential) {
+        Connect-PnPOnline -Url $config.SPUrl -Credentials $config.Credential
+      } else {
+        Write-Verbose "Connecting to $($SPUrl)"
+        Connect-PnPOnline -Url $SPUrl -CurrentCredentials
+      }
+    }
     $SelectGroups = [SPSiteGroups]::new()
     Write-Verbose $SelectGroups
     $GroupToSet = $SelectGroups.GroupByTitle($config.GroupTitle)
@@ -73,9 +84,12 @@ Function Set-SiteGroupUser {
     $SelectGroups.AddRole($config.GroupTitle, $GroupRole)
     Write-Verbose "Making sure the members exist in $($GroupToSet.Title)"
     $SelectGroups.NewGroupMember($config.GroupTitle, $config.GroupUsers)
+    if ($SPUrl) {
+      Disconnect-PnPOnline
+    }
   }
   END
   {
-    Disconnect-PnPOnline
+    Disconnect-PnPOnline -ErrorAction SilentlyContinue
   }
 }
