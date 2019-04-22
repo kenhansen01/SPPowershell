@@ -1,16 +1,16 @@
 @{
   # Module Cofiguration
   Credential = [System.Net.CredentialCache]::DefaultNetworkCredentials
-  SPEnvironment = "2016"
+  SPVersion = "2016"
   Proxy = $true
   AddCSOM = $false
   # Default Connection
-  SPUrl = "http://my.cool.site"
+  ConnectionUrl = "http://my.cool.site"
   # Site Collection
-  SiteUrl = "/projects"
-  SiteTitle = ""
-  SiteTemplate = ""
-  SiteDescription = ""
+  SiteSearchUrl = "/projects"
+  SiteSearchTitle = ""
+  SiteSearchTemplate = ""
+  SiteSearchDescription = ""
   # Site Groups / Users
   GroupTitle = "GroupTitle"
   GroupDescription = "Group for robots"

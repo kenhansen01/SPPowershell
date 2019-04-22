@@ -3,8 +3,8 @@ Function Set-SiteGroupUser {
   .SYNOPSIS
   .DESCRIPTION
   .PARAMETER Credential
-  .PARAMETER SPEnvironment
-  .PARAMETER SPUrl
+  .PARAMETER SPVersion
+  .PARAMETER ConnectionUrl
   .PARAMETER GroupTitle
   .PARAMETER GroupUsers
   .EXAMPLE
@@ -19,11 +19,11 @@ Function Set-SiteGroupUser {
     [Parameter(ValueFromPipelineByPropertyName = $True)]
     [ValidateSet("2013","2016","2019","Online")]
     [string]
-    $SPEnvironment,
+    $SPVersion,
     # root sharepoint url
     [Parameter(ValueFromPipelineByPropertyName = $True, ValueFromPipeline, Position=0)]
     [string]
-    $SPUrl,
+    $ConnectionUrl,
     # Custom Config
     [Parameter()]
     [switch]
@@ -49,7 +49,7 @@ Function Set-SiteGroupUser {
   {
     $customConfigObject = [PSCustomObject]@{
       Credential = $Credential
-      SPEnvironment = $SPEnvironment
+      SPVersion = $SPVersion
       GroupTitle = $GroupTitle
       GroupUsers = $GroupUsers
     }
@@ -57,20 +57,20 @@ Function Set-SiteGroupUser {
       Set-SPModuleConfiguration -CustomConfig:$CustomConfig -CustomConfigObject $customConfigObject -ConfigFile $ConfigFile
     }
     if ($config.Credential) {
-      Connect-PnPOnline -Url $config.SPUrl -Credentials $Credential
+      Connect-PnPOnline -Url $config.ConnectionUrl -Credentials $Credential
     } else {
-      Write-Verbose "Connecting to $($config.SPUrl)"
-      Connect-PnPOnline -Url $config.SPUrl -CurrentCredentials
+      Write-Verbose "Connecting to $($config.ConnectionUrl)"
+      Connect-PnPOnline -Url $config.ConnectionUrl -CurrentCredentials
     }    
   }
   PROCESS
   {
-    if($SPUrl){
+    if($ConnectionUrl){
       if ($config.Credential) {
-        Connect-PnPOnline -Url $config.SPUrl -Credentials $config.Credential
+        Connect-PnPOnline -Url $config.ConnectionUrl -Credentials $config.Credential
       } else {
-        Write-Verbose "Connecting to $($SPUrl)"
-        Connect-PnPOnline -Url $SPUrl -CurrentCredentials
+        Write-Verbose "Connecting to $($ConnectionUrl)"
+        Connect-PnPOnline -Url $ConnectionUrl -CurrentCredentials
       }
     }
     $SelectGroups = [SPSiteGroups]::new()
@@ -84,7 +84,7 @@ Function Set-SiteGroupUser {
     $SelectGroups.AddRole($config.GroupTitle, $GroupRole)
     Write-Verbose "Making sure the members exist in $($GroupToSet.Title)"
     $SelectGroups.NewGroupMember($config.GroupTitle, $config.GroupUsers)
-    if ($SPUrl) {
+    if ($ConnectionUrl) {
       Disconnect-PnPOnline
     }
   }

@@ -3,8 +3,8 @@ Function Get-SPSiteGroup {
   .SYNOPSIS
   .DESCRIPTION
   .PARAMETER Credential
-  .PARAMETER SPEnvironment
-  .PARAMETER SPUrl
+  .PARAMETER SPVersion
+  .PARAMETER ConnectionUrl
   .PARAMETER DefaultConfig
   .PARAMETER AllGroups
   .PARAMETER ById
@@ -31,11 +31,11 @@ Function Get-SPSiteGroup {
     [Parameter(ValueFromPipelineByPropertyName = $True)]
     [ValidateSet("2013","2016","2019","Online")]
     [string]
-    $SPEnvironment,
+    $SPVersion,
     # root sharepoint url
     [Parameter(ValueFromPipelineByPropertyName = $True)]
     [string]
-    $SPUrl,
+    $ConnectionUrl,
     # Custom Config
     [Parameter()]
     [switch]
@@ -81,8 +81,8 @@ Function Get-SPSiteGroup {
   {
     $customConfigObject = [PSCustomObject]@{
       Credential = $Credential
-      SPEnvironment = $SPEnvironment
-      SPUrl = $SPUrl
+      SPVersion = $SPVersion
+      ConnectionUrl = $ConnectionUrl
       GroupId = $GroupId
       GroupTitle = $GroupTitle
       GroupLoginName = $GroupLoginName
@@ -93,10 +93,10 @@ Function Get-SPSiteGroup {
     }
     Write-Verbose "Group Title: $($config.GroupTitle)"
     if ($config.Credential) {
-      Connect-PnPOnline -Url $config.SPUrl -Credentials $Credential
+      Connect-PnPOnline -Url $config.ConnectionUrl -Credentials $Credential
     } else {
-      Write-Verbose "Connecting to $($config.SPUrl)"
-      Connect-PnPOnline -Url $config.SPUrl -CurrentCredentials
+      Write-Verbose "Connecting to $($config.ConnectionUrl)"
+      Connect-PnPOnline -Url $config.ConnectionUrl -CurrentCredentials
     }
   }
   PROCESS

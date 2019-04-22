@@ -10,9 +10,9 @@ Function Set-SPModuleConfiguration {
     Hashtable with configuration data. Overrides existing values, adds new values.
 
     EX: [pscustomobject]@{
-      SPEnvironment = "2013"
+      SPVersion = "2013"
       Proxy = $false
-      SPUrl = "http://my.cool.site"
+      ConnectionUrl = "http://my.cool.site"
     }
   .PARAMETER ConfigFile
     Location of  custom config file. 
@@ -49,8 +49,8 @@ Function Set-SPModuleConfiguration {
        
        $Script:config = ([SPConfigure]::new($CustomConfigObject, $ConfigFile)).Configuration
      }
-     write-verbose "Ensure SharePointPnPPowerShell$($config.SPEnvironment) Exists"
-     if (!(Get-Module "SharePointPnPPowerShell$($config.SPEnvironment)")) {
+     write-verbose "Ensure SharePointPnPPowerShell$($config.SPVersion) Exists"
+     if (!(Get-Module "SharePointPnPPowerShell$($config.SPVersion)")) {
        $config | Set-PnPPowershell -Verbose:$VerbosePreference
      }
      Write-Verbose $config

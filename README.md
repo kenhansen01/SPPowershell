@@ -20,9 +20,9 @@ Assuming I have a config file Config.psd1
 
 ```PowerShell
 # Get relevant Urls
-$siteUrls = (Get-SPSiteCollection -ConfigFile "C:\User\Me\Documents\Config.psd1" -CustomConfig -ByUrl | Select Url).Url
+$SiteSearchUrls = (Get-SPSiteCollection -ConfigFile "C:\User\Me\Documents\Config.psd1" -CustomConfig -ByUrl | Select Url).Url
 # At each url, ensure the group exists, has permissions and includes users
-$siteUrls | Set-SiteGroupUser
+$SiteSearchUrls | Set-SiteGroupUser
 ```
 
 Neat!

@@ -10,18 +10,18 @@ Function Get-SPSiteCollection {
     EX: "C:\Users\ME\Documents\Powershell\config.psd1"
   .PARAMETER Credential
     Credentials to connect to SharePoint. Default is current logged in user.
-  .PARAMETER SPEnvironment
-  .PARAMETER SPUrl
+  .PARAMETER SPVersion
+  .PARAMETER ConnectionUrl
   .PARAMETER CustomConfig
   .PARAMETER AllSites
   .PARAMETER ByUrl
   .PARAMETER ByTitle
   .PARAMETER ByTemplate
   .PARAMETER ByDescription
-  .PARAMETER SiteUrl
-  .PARAMETER SiteTitle
-  .PARAMETER SiteTemplate
-  .PARAMETER SiteDescription
+  .PARAMETER SiteSearchUrl
+  .PARAMETER SiteSearchTitle
+  .PARAMETER SiteSearchTemplate
+  .PARAMETER SiteSearchDescription
   .EXAMPLE
   #>
   [cmdletbinding()]
@@ -38,11 +38,11 @@ Function Get-SPSiteCollection {
     [Parameter(ValueFromPipelineByPropertyName = $True)]
     [ValidateSet("2013","2016","2019","Online")]
     [string]
-    $SPEnvironment,
+    $SPVersion,
     # root sharepoint url
     [Parameter(ValueFromPipelineByPropertyName = $True)]
     [string]
-    $SPUrl,
+    $ConnectionUrl,
     # Custom Config
     [Parameter()]
     [switch]
@@ -70,39 +70,39 @@ Function Get-SPSiteCollection {
     # url string fragment to search sites by
     [Parameter(ValueFromPipelineByPropertyName = $True, ParameterSetName='ByUrl')]
     [string]
-    $SiteUrl,
+    $SiteSearchUrl,
     # title string fragment to search sites by
     [Parameter(ValueFromPipelineByPropertyName = $True, ParameterSetName='ByTitle')]
     [string]
-    $SiteTitle,
+    $SiteSearchTitle,
     # template string to search sites by
     [Parameter(ValueFromPipelineByPropertyName = $True, ParameterSetName='ByTemplate')]
     [string]
-    $SiteTemplate,
+    $SiteSearchTemplate,
     # description string to search sites by
     [Parameter(ValueFromPipelineByPropertyName = $True, ParameterSetName='ByDescription')]
     [string]
-    $SiteDescription
+    $SiteSearchDescription
   )
   BEGIN
   {
     $customConfigObject = [PSCustomObject]@{
       Credential = $Credential
-      SPEnvironment = $SPEnvironment
-      SPUrl = $SPUrl
-      SiteUrl = $SiteUrl
-      SiteTitle = $SiteTitle
-      SiteTemplate = $SiteTemplate
-      SiteDescription = $SiteDescription
+      SPVersion = $SPVersion
+      ConnectionUrl = $ConnectionUrl
+      SiteSearchUrl = $SiteSearchUrl
+      SiteSearchTitle = $SiteSearchTitle
+      SiteSearchTemplate = $SiteSearchTemplate
+      SiteSearchDescription = $SiteSearchDescription
     }
     if(!$config -or !!$ConfigFile -or $CustomConfig) {
       Set-SPModuleConfiguration -CustomConfig:$CustomConfig -CustomConfigObject $customConfigObject -ConfigFile $ConfigFile
     }
     if ($config.Credential) {
-      Connect-PnPOnline -Url $config.SPUrl -Credentials $Credential
+      Connect-PnPOnline -Url $config.ConnectionUrl -Credentials $Credential
     } else {
-      Write-Verbose "Connecting to $($config.SPUrl)"
-      Connect-PnPOnline -Url $config.SPUrl -CurrentCredentials
+      Write-Verbose "Connecting to $($config.ConnectionUrl)"
+      Connect-PnPOnline -Url $config.ConnectionUrl -CurrentCredentials
     }
   }
   PROCESS
@@ -110,10 +110,10 @@ Function Get-SPSiteCollection {
     $SelectSites = [SPSelectSites]::new()
     
     if ($AllSites) { $SiteCollections = $SelectSites.AllSites }
-    if ($ByUrl) { $SiteCollections = $SelectSites.SitesByUrl($config.SiteUrl) }
-    if ($ByTitle) { $SiteCollections = $SelectSites.SitesByTitle($config.SiteTitle) } 
-    if ($ByTemplate) { $SiteCollections = $SelectSites.SitesByTemplate($config.SiteTemplate) }
-    if ($ByDescription) { $SiteCollections = $SelectSites.SitesByDescription($config.SiteDescription) }
+    if ($ByUrl) { $SiteCollections = $SelectSites.SitesByUrl($config.SiteSearchUrl) }
+    if ($ByTitle) { $SiteCollections = $SelectSites.SitesByTitle($config.SiteSearchTitle) } 
+    if ($ByTemplate) { $SiteCollections = $SelectSites.SitesByTemplate($config.SiteSearchTemplate) }
+    if ($ByDescription) { $SiteCollections = $SelectSites.SitesByDescription($config.SiteSearchDescription) }
     $SiteCollections
   }
   END
