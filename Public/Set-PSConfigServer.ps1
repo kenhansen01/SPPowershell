@@ -5,7 +5,13 @@ Function Set-PSConfigServer {
   .DESCRIPTION
     Runs PSConfig on each server.
   .PARAMETER ServerNames
+    The servers to run PSConfig on, these should be in order of Updates
   .PARAMETER Credential
+    User Creds
+  .EXAMPLE
+    Set-PSConfigServer -ConfigFile "C:\Users\q140889\OneDrive for Business\Documents\PowerShell\Config.psd1" -CustomConfig -Credential ameren\q140889 -Verbose
+
+    Runs the command on the servers found in the Config File.
   #>
   [cmdletbinding()]
   param(
