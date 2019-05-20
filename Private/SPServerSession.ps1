@@ -10,11 +10,11 @@ class SPServerSession {
   
   [void]Open ([String]$ServerName, [PSCredential]$Credential) {
     Write-Verbose "Ensure $ServerName is able to accept credSSP."
-    $wsManCredRemote = Invoke-Command -ComputerName peso6shrap1gv -ScriptBlock { Get-WSManCredSSP } -Credential $Credential
-
+    $wsManCredRemote = Invoke-Command -ComputerName $ServerName -ScriptBlock { Get-WSManCredSSP } -Credential $Credential
+    Write-Host "credSSP response is $wsManCredRemote"
     if($wsManCredRemote[1] -notlike "This computer is configured to receive credentials *")
     {
-      Invoke-Command -ComputerName peso6shrap1gv -ScriptBlock { Enable-WSManCredSSP -Role "Server" -Force } -Credential $Credential
+      Invoke-Command -ComputerName $ServerName -ScriptBlock { Enable-WSManCredSSP -Role "Server" -Force } -Credential $Credential
     }
 
     Write-Verbose "Opening session for: $ServerName"
